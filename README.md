@@ -16,14 +16,15 @@ UsernamePasswordAuthenticationFilter를 사용해 인증 과정을 자동으로 
 위 사진과 같이 컨트롤러를 주석처리해도 시큐리티 필터체인에서 가로채서 자동 실행시키기 때문에 정상적으로 로그인 처리가 됩니다.
 또한 ContextHolder에서 유저 정보를 빼와서 mapper 또는 jpa에서 바로 정보를 조회할 수 있습니다.
 
-<img width="926" alt="Screenshot 2024-05-19 at 3 08 26 PM" src="https://github.com/donghwi-cubox-ai/assingment-3/assets/166668961/a47658b3-bf4e-4138-9a50-0ab2ed9d3d53">
+<img width="926" alt="Screenshot 2024-05-19 at 3 08 26 PM" src="https://github.com/donghwi-cubox-ai/assignment-3/assets/166668961/9680800d-6392-4ef5-b8fc-da12b55d2d30">
 
 ** .defaultSuccessUrl("/main", true)
 true 매개변수는 alwaysUse 옵션을 설정합니다. 이 설정은 사용자가 로그인에 성공했을 때, 지정된 url로 사용자를 리다이렉션 시킵니다.
 true는 어떤 요청을 통해 로그인 페이지에 도달했는지에 상관없이 항상 main으로 리다이렉션하라는 설정입니다.
 
 ## 📌 비밀번호 90일이 자나면 만료되는
-<img width="748" alt="Screenshot 2024-05-19 at 3 21 21 PM" src="https://github.com/donghwi-cubox-ai/assingment-3/assets/166668961/1a3f04b0-ad59-489b-8d85-115b897b49a4">
+
+<img width="748" alt="Screenshot 2024-05-19 at 3 21 21 PM" src="https://github.com/donghwi-cubox-ai/assignment-3/assets/166668961/a3e27a2f-21e2-4a23-a1d2-e6976948fd23">
 
 ** .credentialsExpired 는 비밀번호 만료를 설정한다. false일 경우 비밀번호를 만료시키고 true일 경우 활성화됩니다.
 따라서, Duration의 between을 사용하여 두 파라미터 간의 차가 90일을 넘을 경우 false를 반환하여 비밀번호를 만료시킵니다.
