@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>SB Admin 2 - Dashboard</title>
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+</head>
+
+<script th:inline="javascript">
+    let checkLogin;
+    let currentTitle;
+    let currentContent;
+
+    $(document).ready(function() {
+        initBoard();
+
+        function initBoard() {
+            // let boardId;
+            $.ajax({
+                url: '/ajax/get',
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    let tbody = $('#boardAjax tbody');
+                    tbody.empty();
+                    $.each(data, function(index, board) {
+                        checkLogin = board.checkLoginMember;
+
+                        tbody.append(
+                            '<tr data-board-id="' + board.id + '" ' +
+                            'data-title="' + board.boardName + '" ' +
+                            'data-content="' + board.boardContent + '">' +
+                            '<th scope="row">' + (index + 1) + '</th>' +
+                            '<td class="text-truncate">' + (board.boardName.length > 10 ? board.boardName.substring(0, 10) + "..." : board.boardName) + '</td>' +
+                            '<td class="text-truncate">' + (board.boardContent.length > 20 ? board.boardContent.substring(0, 20) + "..." : board.boardContent) + '</td>' +
+                            '<td>' + board.nickname + '</td>' +
+                            '</tr>'
+                        );
+                    });
+                    trBo();
+                },
+                error: function(xhr, status, error) {
+                    console.error('실패:', error);
+                }
+            });
+        }
+
+        // $('#searchBoard').click(function () {
+        //     searchBoards();
+        // });
+        //
+        // function searchBoards() {
+        //     let searchText = $('#searchInput').val();
+        //     console.log(searchText);
+        //     $.ajax({
+        //         url: '/ajax/search/' + searchText,
+        //         type: 'POST',
+        //         dataType: 'json',
+        //         success: function(data) {
+        //             populateTable(data);
+        //
+        //         },
+        //         error: function(xhr, status, error) {
+        //             console.error('Search failed:', error);
+        //         }
+        //     });
+        // }
+
+        // function populateTable(data) {
+        //     let tbody = $('#boardAjax tbody');
+        //     tbody.empty();
+        //     $.each(data, function(index, board) {
+        //         tbody.append(
+        //             '<tr data-board-id="' + board.id + '" ' +
+        //             'data-title="' + board.boardName + '" ' +
+        //             'data-content="' + board.boardContent + '">' +
+        //             '<th scope="row">' + (index + 1) + '</th>' +
+        //             '<td class="text-truncate">' + (board.boardName.length > 10 ? board.boardName.substring(0, 10) + "..." : board.boardName) + '</td>' +
+        //             '<td class="text-truncate">' + (board.boardContent.length > 20 ? board.boardContent.substring(0, 20) + "..." : board.boardContent) + '</td>' +
+        //             '<td>' + board.nickname + '</td>' +
+        //             '</tr>'
+        //         );
+        //     });
+        // }
+
+        function trBo() {
+            $('#boardAjax tbody').on('click', 'tr', function() {
+                var boardId = $(this).data('board-id');
+                console.log(boardId);
+
+                $('#selectedBoardId').val(boardId);
+                var title = $(this).data('title');
+                var content = $(this).data('content');
+
+                $('.modal-title').text(title);
+                $('.modal-body').html(content);
+                console.log(checkLogin);
+                if (checkLogin) {
+                    $('#updateBoard').show();
+                    $('#deleteBoard').show();
+                    $('#saveBoard').hide();
+                } else {
+                    $('#updateBoard').hide();
+                    $('#deleteBoard').hide();
+                    $('#saveBoard').hide();
+                }
+                $('#showModal').modal('show');
+
+                $('#deleteBoard').click(function() {
+                    var boardId = $(this).data('board-id');
+                    $.ajax({
+                        url: '/ajax/delete/' +  $('#selectedBoardId').val(),
+                        type: 'DELETE',
+                        success: function(response) {
+                            $('#showModal').modal('hide');
+                            initBoard();
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('실패:', error);
+                        }
+                    });
+                });
+
+                $('#updateBoard').click(function() {
+                    currentTitle = $('.modal-title').text();
+                    currentContent = $('.modal-body').text();
+
+                    console.log(currentTitle);
+                    console.log(currentContent);
+
+                    $('.modal-title').html('<input type="text" id="editTitle" class="form-control" value="' + currentTitle + '">');
+                    $('.modal-body').html('<textarea id="editContent" class="form-control">' + currentContent + '</textarea>');
+
+                    $(this).hide();
+                    $('#saveBoard').show();
+                });
+
+                $('#saveBoard').click(function() {
+                    let updatedTitle = $('#editTitle').val();
+                    let updatedContent = $('#editContent').val();
+
+                    console.log(updatedTitle)
+                    console.log(updatedContent)
+
+                    var boardRequest = {
+                        boardName: updatedTitle,
+                        boardContent: updatedContent
+                    };
+
+                    console.log("save" +  $('#selectedBoardId').val())
+
+                    $.ajax({
+                        url: '/ajax/update/' +  $('#selectedBoardId').val(),
+                        type: 'PUT',
+                        contentType: 'application/json',
+                        data: JSON.stringify(boardRequest),
+                        dataType: 'json',
+                        success: function(response) {
+                            $('.modal-title').text(response.boardName);
+                            $('.modal-body').text(response.boardContent);
+
+                            $('#showModal').modal('hide');
+                            initBoard();
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('업데이트 실패:', error);
+                            $('#saveBoard').hide();
+                            $('#updateBoard').show();
+                        }
+                    });
+                });
+
+            });
+        }
+
+        // $('#logout').click(function(e) {
+        //     e.preventDefault();
+        //     $.ajax({
+        //         type: 'POST',
+        //         url: '/member/logout',
+        //         success: function() {
+        //             window.location.href = '/login';
+        //         }
+        //     });
+        // });
+    });
+</script>
+
+<body id="page-top">
+    <div id="wrapper">
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+                <div class="sidebar-brand-icon rotate-n-15">
+                    <i class="fas fa-laugh-wink"></i>
+                </div>
+                <div class="sidebar-brand-text mx-3">권동휘 과제<sup>2</sup></div>
+            </a>
+            <hr class="sidebar-divider my-0">
+            <li class="nav-item active">
+                <a class="nav-link" href="/main">
+                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <span>메인 페이지</span></a>
+            </li>
+            <hr class="sidebar-divider">
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="/login"> <i class="fas fa-fw fa-folder"></i><span>로그인</span></a>
+                <a class="nav-link collapsed" href="/register"><i class="fas fa-fw fa-folder"></i><span>회원가입</span></a>
+            </li>
+            <hr class="sidebar-divider d-none d-md-block">
+            <div class="text-center d-none d-md-inline">
+                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+            </div>
+        </ul>
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <form
+                        class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                        <div class="input-group">
+                            <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
+                                aria-label="Search" aria-describedby="basic-addon2">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="button">
+                                    <i class="fas fa-search fa-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item dropdown no-arrow d-sm-none">
+                            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-search fa-fw"></i>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
+                                 aria-labelledby="searchDropdown">
+                                <form class="form-inline mr-auto w-100 navbar-search">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control bg-light border-0 small" id="searchInput"
+                                               placeholder="Search for..." aria-label="Search"
+                                               aria-describedby="basic-addon2">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-primary" type="button" id="searchBoard">
+                                                <i class="fas fa-search fa-sm"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
+                                <img class="img-profile rounded-circle"
+                                    src="img/undraw_profile.svg">
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                aria-labelledby="userDropdown">
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#" id="logout">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Logout
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
+                <div class="container-fluid">
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">게시판!!!</h1>
+                        <a href="/blank" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#mmodal">
+                            글 작성하기
+                        </a>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                유저 수</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">2</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-success shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                                게시글 수</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">10</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-info shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">과제 완성도
+                                            </div>
+                                            <div class="row no-gutters align-items-center">
+                                                <div class="col-auto">
+                                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">80%</div>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="progress progress-sm mr-2">
+                                                        <div class="progress-bar bg-info" role="progressbar"
+                                                            style="width: 50%" aria-valuenow="80" aria-valuemin="0"
+                                                            aria-valuemax="100"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="container-fluid">
+                            <form id="operationForm" style="display: none;">
+                                <input type="hidden" id="selectedBoardId">
+                            </form>
+
+                            <table class="table" id="boardAjax">
+                                <thead>
+                                <tr>
+                                    <th class="col-1">목차</th>
+                                    <th class="col-4">제목</th>
+                                    <th class="col-5">내용</th>
+                                    <th class="col-2">작성자</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; Your Website 2021</span>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+    <div class="modal fade" id="showModal" tabindex="-1" aria-labelledby="showModals" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content" style="height: 650px; width: 550px;">
+                <div class="modal-header">
+                    <h5 class="modal-title fs-5" id="showModals">Modal title</h5>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="saveBoard">저장하기</button>
+                    <button type="button" class="btn btn-secondary" id="updateBoard">수정하기</button>
+                    <button type="button" class="btn btn-primary" id="deleteBoard">삭제하기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="js/sb-admin-2.min.js"></script>
+<!--    <script th:if="${error}" th:inline="javascript">-->
+<!--        /*<![CDATA[*/-->
+<!--        alert([[${error}]]);-->
+<!--        /*]]>*/-->
+<!--    </script>-->
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+</body>
+</html>
+
+
