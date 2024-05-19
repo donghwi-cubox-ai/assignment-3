@@ -2,7 +2,8 @@
 개발 과제 - 3
 
 # 라이센스 관련
-<img width="892" alt="Screenshot 2024-05-19 at 2 45 51 PM" src="https://github.com/donghwi-cubox-ai/assingment-3/assets/166668961/e4847754-9a4d-40f0-9dc4-ca68ffa12fdd">
+<img width="892" alt="Screenshot 2024-05-19 at 2 45 51 PM" src="https://github.com/donghwi-cubox-ai/assignment-3/assets/166668961/dd74c761-219a-450c-bf36-8f541687b572">
+
 
 ## 트러블 슈팅
 🤔 왜 Spring Security를 사용하면 Controller를 타지 않을까??
@@ -27,12 +28,14 @@ true는 어떤 요청을 통해 로그인 페이지에 도달했는지에 상관
 ** .credentialsExpired 는 비밀번호 만료를 설정한다. false일 경우 비밀번호를 만료시키고 true일 경우 활성화됩니다.
 따라서, Duration의 between을 사용하여 두 파라미터 간의 차가 90일을 넘을 경우 false를 반환하여 비밀번호를 만료시킵니다.
 
-<img width="345" alt="Screenshot 2024-05-19 at 3 06 09 PM" src="https://github.com/donghwi-cubox-ai/assingment-3/assets/166668961/9c612f31-b337-400f-9b6e-e0bcaaf1cc06">
+<img width="345" alt="Screenshot 2024-05-19 at 3 06 09 PM" src="https://github.com/donghwi-cubox-ai/assignment-3/assets/166668961/07da5e75-707f-453e-9319-470cfe41aa13">
+
 
 ### 비밀번호 역사
 텍스트 비밀번호 -> SQL Injection -> SHA-256 -> Rainbow Tables(전체 해시값 저장 테이블) -> salt(소금) + bycrpt
 
-<img width="1111" alt="Screenshot 2024-05-19 at 3 04 41 PM" src="https://github.com/donghwi-cubox-ai/assingment-3/assets/166668961/1060cf18-ac2b-46e1-9b15-788141debec5">
+<img width="883" alt="Screenshot 2024-05-19 at 2 53 35 PM" src="https://github.com/donghwi-cubox-ai/assignment-3/assets/166668961/601f86e2-0be3-4dd2-a770-9409ba950c7a">
+
 
 위 사진처럼 {소금} 최근에는 소금을 쳐서 비밀번호를 단방향 암호화하여 저장함으로 전체 해시값을 저장하면서 채굴하는 레인보우 테이블을 방어할 수 있게 변경되었습니다.
 ⁉️ {bycrpt} 값이 함께 저장되지 않을 때 오류가 발생할 수 있으니 주의해야 합니다.
