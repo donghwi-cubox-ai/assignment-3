@@ -1,54 +1,37 @@
-1. 다음 구성으로 로컬 환경 구성 후 과제 프로젝트 수행( 주업무와 별도로 과제 수행 )
+# assingment-3
+개발 과제 - 3
 
-[기본 구성 조건]
+# 라이센스 관련
+<img width="892" alt="Screenshot 2024-05-19 at 2 45 51 PM" src="https://github.com/donghwi-cubox-ai/assingment-3/assets/166668961/e4847754-9a4d-40f0-9dc4-ca68ffa12fdd">
 
-  - java v21
-  - spring boot 3.2.4
+## 트러블 슈팅
+🤔 왜 Spring Security를 사용하면 Controller를 타지 않을까??
 
-  - mariadb ( 게시판 테이블 작성 )
+loginProcessingUrl("/member/login")이 정의되어 있기 때문에 FormLogin일 경우
+/member/login 으로 POST 요청이 들어올 때 Spring Security에서 가로채서 
+UsernamePasswordAuthenticationFilter를 사용해 인증 과정을 자동으로 처리합니다.
+<img width="919" alt="Screenshot 2024-05-19 at 3 22 23 PM" src="https://github.com/donghwi-cubox-ai/assingment-3/assets/166668961/7a460d9d-c3d9-41de-92ba-1aa341af22c5">
+위 사진과 같이 컨트롤러를 주석처리해도 시큐리티 필터체인에서 가로채서 자동 실행시키기 때문에 정상적으로 로그인 처리가 됩니다.
+또한 ContextHolder에서 유저 정보를 빼와서 mapper 또는 jpa에서 바로 정보를 조회할 수 있습니다.
 
-  - bootstrap 5.2
+<img width="926" alt="Screenshot 2024-05-19 at 3 08 26 PM" src="https://github.com/donghwi-cubox-ai/assingment-3/assets/166668961/a47658b3-bf4e-4138-9a50-0ab2ed9d3d53">
 
-  - thymeleaf 
+** .defaultSuccessUrl("/main", true)
+true 매개변수는 alwaysUse 옵션을 설정합니다. 이 설정은 사용자가 로그인에 성공했을 때, 지정된 url로 사용자를 리다이렉션 시킵니다.
+true는 어떤 요청을 통해 로그인 페이지에 도달했는지에 상관없이 항상 main으로 리다이렉션하라는 설정입니다.
 
-  - ajax 
+## 📌 비밀번호 90일이 자나면 만료되는
+<img width="748" alt="Screenshot 2024-05-19 at 3 21 21 PM" src="https://github.com/donghwi-cubox-ai/assingment-3/assets/166668961/1a3f04b0-ad59-489b-8d85-115b897b49a4">
 
- 
+** .credentialsExpired 는 비밀번호 만료를 설정한다. false일 경우 비밀번호를 만료시키고 true일 경우 활성화됩니다.
+따라서, Duration의 between을 사용하여 두 파라미터 간의 차가 90일을 넘을 경우 false를 반환하여 비밀번호를 만료시킵니다.
 
-[기본 개발 요청 내용] 
+<img width="345" alt="Screenshot 2024-05-19 at 3 06 09 PM" src="https://github.com/donghwi-cubox-ai/assingment-3/assets/166668961/9c612f31-b337-400f-9b6e-e0bcaaf1cc06">
 
-- 제목 : 최대 50자 ( 목록 조회시 20자만 조회되고 '...' 말줄임표 표시 )
+### 비밀번호 역사
+텍스트 비밀번호 -> SQL Injection -> SHA-256 -> Rainbow Tables(전체 해시값 저장 테이블) -> salt(소금) + bycrpt
 
-- 제목, 내용, 작성자 : 단순입력
+<img width="1111" alt="Screenshot 2024-05-19 at 3 04 41 PM" src="https://github.com/donghwi-cubox-ai/assingment-3/assets/166668961/1060cf18-ac2b-46e1-9b15-788141debec5">
 
-- 내용 : 최대 200자 
-
-- 검색조건 : 제목(2자 이상, 해당문자 포함된 제목글 조회)
-
- 
-
-[추가 기능(옵션)]
-
-- 로그인 기능 ( 사용자 등록 )
-
-- 등록자 ID제한으로 게시물 수정 제한
-
-- 세션 유지 시간 1분 적용 또는 토큰 갱신 요청시간 
-
-- 댓글 추가 기능
-
-- 상단 상태바, 로그아웃 기능
-
-- 화면비율에 따른 반응형 레이아웃
-
-- java 21 특징 예제 구현
-
- 
-
-[진행 일정]
-
-진행 1일차 :  bootstrap 중 작성하기 편하고 무료디자인 선택 후 공유(댓글로 관련 URL 등록)
-
-진행 2~5일차 : 게시판 조회/등록/수정 화면 작성( ajax 적용 부분 별도 명시 )
-
-발표 : 4/26 3시, 대회의실, 완료 댓글 작성 순서로 2~30분 으로 개발 내용 발표
+위 사진처럼 {소금} 최근에는 소금을 쳐서 비밀번호를 단방향 암호화하여 저장함으로 전체 해시값을 저장하면서 채굴하는 레인보우 테이블을 방어할 수 있게 변경되었습니다.
+⁉️ {bycrpt} 값이 함께 저장되지 않을 때 오류가 발생할 수 있으니 주의해야 합니다.
