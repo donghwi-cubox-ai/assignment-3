@@ -10,7 +10,7 @@
 loginProcessingUrl("/member/login")이 정의되어 있기 때문에 FormLogin일 경우
 /member/login 으로 POST 요청이 들어올 때 Spring Security에서 가로채서 
 UsernamePasswordAuthenticationFilter를 사용해 인증 과정을 자동으로 처리합니다.
-<img width="919" alt="Screenshot 2024-05-19 at 3 22 23 PM" src="https://github.com/donghwi-cubox-ai/assingment-3/assets/166668961/7a460d9d-c3d9-41de-92ba-1aa341af22c5">
+<img width="919" alt="Screenshot 2024-05-19 at 3 22 23 PM" src="[https://github.com/donghwi-cubox-ai/assingment-3/assets/166668961/7a460d9d-c3d9-41de-92ba-1aa341af22c5](https://private-user-images.githubusercontent.com/166668961/331853312-25bc7cb5-0036-4e22-9c9e-f5bb57330aab.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MTYxMDIwNjEsIm5iZiI6MTcxNjEwMTc2MSwicGF0aCI6Ii8xNjY2Njg5NjEvMzMxODUzMzEyLTI1YmM3Y2I1LTAwMzYtNGUyMi05YzllLWY1YmI1NzMzMGFhYi5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjQwNTE5JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI0MDUxOVQwNjU2MDFaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT03NzAzZTY3ZmM1YmY0MzY2YzdiNzU1NzhjZjgzYThmYjI1ZGQyMjY2ZmI1NGQ0ZDI0MzkzOGQ5YzExYzJhNGUyJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCZhY3Rvcl9pZD0wJmtleV9pZD0wJnJlcG9faWQ9MCJ9.mQ1zqHZtPSVzkZvWzrAnG5zjVjxTnRDOwHanzDmMZd0)">
 위 사진과 같이 컨트롤러를 주석처리해도 시큐리티 필터체인에서 가로채서 자동 실행시키기 때문에 정상적으로 로그인 처리가 됩니다.
 또한 ContextHolder에서 유저 정보를 빼와서 mapper 또는 jpa에서 바로 정보를 조회할 수 있습니다.
 
